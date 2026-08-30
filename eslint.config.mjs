@@ -15,8 +15,10 @@ export default defineConfig(
   ...isaacScriptModConfigBase,
 
   {
+    files: ["scripts/**/*.ts"],
     rules: {
-      // Insert changed or disabled rules here, if necessary.
+      "@typescript-eslint-no-unnecessary-condition": "off",
+      "@typescript-eslint/await-thenable": "off",
     },
   },
 );
