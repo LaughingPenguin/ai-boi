@@ -10,7 +10,7 @@ export interface EntitySnapshot {
   isPlayer: boolean;
 }
 
-export interface PlayerSnapshot {
+interface PlayerSnapshot {
   position: Vector;
   velocity: Vector;
   health: number;
@@ -25,7 +25,7 @@ export interface GameState {
   entities: EntitySnapshot[];
 }
 
-export interface Goal {
+interface Goal {
   type: "idle";
 }
 
