@@ -17,7 +17,7 @@ export default defineConfig(
   {
     files: ["scripts/**/*.ts"],
     rules: {
-      "@typescript-eslint-no-unnecessary-condition": "off",
+      "@typescript-eslint/no-unnecessary-condition": "off",
       "@typescript-eslint/await-thenable": "off",
     },
   },
