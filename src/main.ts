@@ -1,19 +1,39 @@
-import { ModCallback } from "isaac-typescript-definitions";
+import { Keyboard, ModCallback } from "isaac-typescript-definitions";
+import {
+  ISCFeature,
+  ModCallbackCustom,
+  log,
+  setLogFunctionsGlobal,
+  upgradeMod,
+} from "isaacscript-common";
 import { name } from "../package.json";
+import type { Agent } from "./ai/agent";
+import { IdleAgent } from "./ai/agent";
+import { collectGameState } from "./core/state";
 
 // This function is run when your mod first initializes.
 export function main(): void {
-  // Instantiate a new mod object, which grants the ability to add callback functions that
-  // correspond to in-game events.
-  const mod = RegisterMod(name, 1);
+  const modVanilla = RegisterMod(name, 1);
+  const mod = upgradeMod(modVanilla, [ISCFeature.CUSTOM_HOTKEYS] as const);
+  setLogFunctionsGlobal();
 
-  // Register a callback function that corresponds to when a new player is initialized.
-  mod.AddCallback(ModCallback.POST_PLAYER_INIT, postPlayerInit);
+  const agent: Agent = new IdleAgent();
 
-  // Print a message to the "log.txt" file.
-  Isaac.DebugString(`${name} initialized. Starting now!!!`);
-}
+  mod.AddCallback(ModCallback.POST_UPDATE, () => {
+    const state = collectGameState();
+    agent.decide(state);
+  });
 
-function postPlayerInit() {
-  Isaac.DebugString("Callback fired: POST_PLAYER_INIT");
+  mod.AddCallbackCustom(ModCallbackCustom.POST_NEW_ROOM_REORDERED, () => {
+    const state = collectGameState();
+    log(
+      `Entered room on floor "${state.levelName}" with ${state.entities.length} entities`,
+    );
+  });
+
+  mod.setHotkey(Keyboard.F2, () => {
+    log("Key pressed - F2");
+  });
+
+  log(`${name} initialized`);
 }
